@@ -1,12 +1,6 @@
 package basicgraph;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
 
 import util.GraphLoader;
 
@@ -122,8 +116,14 @@ public abstract class Graph {
 	 */
 	public List<Integer> degreeSequence() {
 		// XXX: Implement in part 1 of week 1
-		return null;
-	}
+        List<Integer> retList = new ArrayList<Integer>();
+        for (int i = 0; i < numVertices; i++) {
+            int degree = getInNeighbors(i).size() + getNeighbors(i).size();
+            retList.add(degree);
+        }
+        Collections.sort(retList,  Collections.reverseOrder());
+        return retList;
+    }
 	
 	/**
 	 * Get all the vertices that are 2 away from the vertex in question.
