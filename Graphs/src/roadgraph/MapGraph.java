@@ -8,6 +8,7 @@
 package roadgraph;
 
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -24,14 +25,22 @@ import util.GraphLoader;
  */
 public class MapGraph {
 	//TODO: Add your member variables here in WEEK 2
-	
-	
+
+    public class Route {
+        public Route(GeographicPoint from, GeographicPoint to, String roadName,
+                     String roadType, double length){
+
+        }
+    }
+
+    private HashMap<GeographicPoint, List<GeographicPoint>> nodeList;
 	/** 
 	 * Create a new empty MapGraph 
 	 */
 	public MapGraph()
 	{
 		// TODO: Implement in this constructor in WEEK 2
+        nodeList = new HashMap<>();
 	}
 	
 	/**
@@ -41,7 +50,7 @@ public class MapGraph {
 	public int getNumVertices()
 	{
 		//TODO: Implement this method in WEEK 2
-		return 0;
+        return nodeList.keySet().size();
 	}
 	
 	/**
@@ -51,7 +60,7 @@ public class MapGraph {
 	public Set<GeographicPoint> getVertices()
 	{
 		//TODO: Implement this method in WEEK 2
-		return null;
+        return nodeList.keySet();
 	}
 	
 	/**
@@ -61,10 +70,13 @@ public class MapGraph {
 	public int getNumEdges()
 	{
 		//TODO: Implement this method in WEEK 2
-		return 0;
+        int total = 0;
+        for ( List<GeographicPoint> nList : nodeList.values()) {
+            total += nList.size();
+        }
+        return total;
 	}
 
-	
 	
 	/** Add a node corresponding to an intersection at a Geographic Point
 	 * If the location is already in the graph or null, this method does 
@@ -76,7 +88,12 @@ public class MapGraph {
 	public boolean addVertex(GeographicPoint location)
 	{
 		// TODO: Implement this method in WEEK 2
-		return false;
+        if (location != null && !nodeList.containsKey(location)) {
+            nodeList.put(location, null);
+            return true;
+        } else {
+            return false;
+        }
 	}
 	
 	/**
@@ -95,6 +112,7 @@ public class MapGraph {
 			String roadType, double length) throws IllegalArgumentException {
 
 		//TODO: Implement this method in WEEK 2
+
 		
 	}
 	
