@@ -8,9 +8,7 @@
 package roadgraph;
 
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Consumer;
 
 import geography.GeographicPoint;
@@ -26,14 +24,7 @@ import util.GraphLoader;
 public class MapGraph {
 	//TODO: Add your member variables here in WEEK 2
 
-    public class Route {
-        public Route(GeographicPoint from, GeographicPoint to, String roadName,
-                     String roadType, double length){
-
-        }
-    }
-
-    private HashMap<GeographicPoint, List<GeographicPoint>> nodeList;
+    private HashMap<GeographicPoint, HashSet<MapRoute>> nodeList;
 	/** 
 	 * Create a new empty MapGraph 
 	 */
@@ -71,8 +62,8 @@ public class MapGraph {
 	{
 		//TODO: Implement this method in WEEK 2
         int total = 0;
-        for ( List<GeographicPoint> nList : nodeList.values()) {
-            total += nList.size();
+        for ( HashSet<MapRoute> rList : nodeList.values()) {
+            total += rList.size();
         }
         return total;
 	}
@@ -89,7 +80,7 @@ public class MapGraph {
 	{
 		// TODO: Implement this method in WEEK 2
         if (location != null && !nodeList.containsKey(location)) {
-            nodeList.put(location, null);
+            nodeList.put(location, new HashSet<>());
             return true;
         } else {
             return false;
@@ -112,13 +103,18 @@ public class MapGraph {
 			String roadType, double length) throws IllegalArgumentException {
 
 		//TODO: Implement this method in WEEK 2
+        if(nodeList.containsKey(from) && nodeList.containsKey(to)){
+            nodeList.get(from).add(new MapRoute(from, to, roadName, roadType, length));
+        } else {
+            throw new IllegalArgumentException("IllegalArgumentException");
+        }
 
 		
 	}
 	
 
 	/** Find the path from start to goal using breadth first search
-	 * 
+	 *
 	 * @param start The starting location
 	 * @param goal The goal location
 	 * @return The list of intersections that form the shortest (unweighted)
@@ -141,15 +137,56 @@ public class MapGraph {
 	public List<GeographicPoint> bfs(GeographicPoint start, 
 			 					     GeographicPoint goal, Consumer<GeographicPoint> nodeSearched)
 	{
-		// TODO: Implement this method in WEEK 2
-		
+		// TODO: Implement this method in WEEK
+        HashMap<GeographicPoint, GeographicPoint> parentMap = new HashMap<>();
+		Queue<GeographicPoint> q = new LinkedList<>();
+        HashSet<GeographicPoint> visited = new HashSet<>();
+        boolean foundPath = false;
+        q.add(start);
+        //visited.add(start);
+        while (!q.isEmpty()){
+            GeographicPoint cur = q.poll();
+            if (cur.equals(goal)){
+                foundPath = true;
+                break;
+            }
+            for ( MapRoute r : nodeList.get(cur)) {
+                GeographicPoint next = r.getEnd();
+                if (!visited.contains(next)){
+                    nodeSearched.accept(next);
+                    parentMap.put(next, cur);
+                    q.add(next);
+                }
+            }
+            visited.add(cur);
+        }
+
+        if (foundPath) {
+            return buildPath(start, goal, parentMap);
+        }
+
+        return null;
+
+
+
 		// Hook for visualization.  See writeup.
 		//nodeSearched.accept(next.getLocation());
 
-		return null;
 	}
 	
+    private List<GeographicPoint> buildPath(GeographicPoint start, GeographicPoint goal,
+                                            HashMap<GeographicPoint, GeographicPoint> parentMap){
+        List<GeographicPoint> path = new LinkedList<>();
+        GeographicPoint curr = goal;
+        path.add(curr);
+        while (!curr.equals(start)) {
+            curr = parentMap.get(curr);
+            path.add(curr);
+        }
 
+        Collections.reverse(path);
+        return path;
+    }
 	/** Find the path from start to goal using Dijkstra's algorithm
 	 * 
 	 * @param start The starting location
