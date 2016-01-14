@@ -56,6 +56,25 @@ class MapNode implements Comparable
 		return neighbors;
 	}
 
+	double getEdgeLength(MapNode endNode){
+        double length = Double.MAX_VALUE;
+		for (MapEdge edge : edges) {
+			if(edge.getEndNode().equals(endNode)){
+				length = edge.getLength();
+			}
+		}
+        if (length < Double.MAX_VALUE){
+            return length;
+        } else{
+            throw new IllegalArgumentException("Looking for " +
+                "a point that is not in the edge");
+        }
+	}
+
+    double getEstimateDistance(MapNode endNode){
+        return this.getLocation().distance(endNode.getLocation());
+    }
+
 	/** get the location of a node */
 	GeographicPoint getLocation()
 	{
